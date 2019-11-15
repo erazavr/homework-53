@@ -1,26 +1,45 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {Component} from 'react';
+import nanoid from 'nanoid'
+import AddTaskForm from "./components/AddTaskForm";
+import Task from "./components/Task";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+import './App.css'
+
+class App extends Component {
+    state = {
+        text: '',
+        id: '',
+        texts: [],
+
+    };
+    changeText = event => {
+        this.setState({text: event.target.value});
+    };
+    addText = (e) => {
+        e.preventDefault()
+        const texts = [...this.state.texts];
+        texts.push({name: this.state.text, id: nanoid()});
+        this.setState({texts, text: ''});
+    };
+    removeTask = id => {
+      const taskIndex = this.state.texts.findIndex(t => t.id === id);
+      const task = [...this.state.texts];
+      task.splice(taskIndex,1);
+      this.setState({texts:task})
+    };
+
+
+    render() {
+        return (
+            <div className='main-block'>
+                <AddTaskForm onChange = {this.changeText} text = {this.state.text} onsubmit = {this.addText}/>
+                {this.state.texts.map((text) => (
+                    <Task key = {text.id} text = {text.name} remove = {() => this.removeTask(text.id)}/>
+                ))}
+            </div>
+        );
+    }
 }
 
 export default App;
